@@ -44,7 +44,6 @@ const FinalCanvassing = () => {
     const socket = socketRef.current;
 
     socket.on("updateVotes", (newVotes) => {
-      // console.log("Real-time vote update:", newVotes);
       setVotes(newVotes || []);
       setLoading(false);
     });
@@ -52,7 +51,6 @@ const FinalCanvassing = () => {
     async function loadVotes() {
       try {
         const data = await fetchOverallVotes();
-        console.log("Fetched Votes Data:", data);
         setVotes(data || []);
       } catch (error) {
         console.error("Error loading votes:", error);
