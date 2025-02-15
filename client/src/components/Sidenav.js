@@ -114,7 +114,7 @@ export default function Sidenav() {
   const [unreadNotifications, setUnreadNotifications] =
     useState(notificationCount);
 
-  const socket = io("http://localhost:5000");
+  const socket = io("http://localhost:8000");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
