@@ -50,7 +50,7 @@ const AdminDashboard = () => {
     loadVotes();
 
     if (!socketRef.current) {
-      socketRef.current = io("http://localhost:5000", {
+      socketRef.current = io("http://localhost:8000", {
         withCredentials: true,
       });
     }
