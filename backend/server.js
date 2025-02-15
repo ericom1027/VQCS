@@ -43,32 +43,18 @@ io.on("connection", (socket) => {
 });
 
 // Middleware
-const allowedOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(",")
-  : ["http://localhost:3000"];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
+    origin: process.env.CLIENT_URL.split(","),
     methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Origin,X-Requested-With,Content-Type,Accept,Authorization",
+    allowedHeaders: "Content-Type,Authorization",
   })
 );
 
 app.use(express.static(path.join(__dirname, "client", "build")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-});
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
 connectDb();
@@ -79,6 +65,10 @@ app.use("/api/candidates", candidateRoutes);
 app.use("/api/precincts", precinctRoutes);
 app.use("/api", voteRoutes);
 app.use("/api/barangays", barangayRoutes);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+});
 
 // Start Server
 const PORT = process.env.PORT || 8000;
