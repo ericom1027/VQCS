@@ -51,7 +51,7 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, "client", "build")));
+app.use(express.static(path.join(__dirname, "client")));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -67,7 +67,7 @@ app.use("/api", voteRoutes);
 app.use("/api/barangays", barangayRoutes);
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+  res.sendFile(path.join(__dirname, "client", "index.html"));
 });
 
 // Start Server
