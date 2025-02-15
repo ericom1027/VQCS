@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Quicksand", sans-serif;
+}
+
+.Login-Form {
+  background-color: transparent;
+  box-shadow: rgba(255, 255, 255, 0.3) 0px 15px 30px 5px,
+    rgba(255, 255, 255, 0.2) 0px 10px 10px 5px;
+  border-radius: 15px;
+  padding: 100px;
+  height: auto;
+  width: 50%;
+  max-width: 400px;
+  color: white;
+}
+
+.Login {
+  background-image: url("https://images.pexels.com/photos/7103201/pexels-photo-7103201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
+}
+
+.MuiAppBar-root {
+  background-color: #1c2678 !important;
+  box-shadow: none !important;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: auto;
+  margin-top: -80px;
+  animation: fadeInOut 2s infinite;
+  margin-bottom: 20px;
+  caret-color: transparent;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.Title-Header {
+  display: inline-block;
+  text-align: center;
+  margin: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 18px;
+  animation: typing 3s steps(20, end) infinite alternate,
+    blinkCursor 0.5s infinite;
+  caret-color: transparent;
+}
+
+.fields {
+  margin-top: -70px;
+}
+
+.custom-header {
+  background-color: #282828;
+}
+.custom-header .MuiTableCell-root {
+  color: white;
+  font-weight: bold;
+}
+
+/* ============ Printing Display=============== */
+/* No Display */
+.no-display {
+  display: none;
+  text-align: center;
+}
+
+/* Show in print */
+@media print {
+  .no-display {
+    display: block !important;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .Login-Form {
+    padding: 20px;
+    width: 80%;
+    height: 50%;
+    margin-top: 30px;
+  }
+
+  .logo {
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    caret-color: transparent;
+  }
+
+  .fields {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .footer {
+    font-size: 20px;
+    font-weight: 200;
+  }
+}
+
+@media (max-width: 480px) {
+  .Login-Form {
+    padding: 50px;
+    width: 80%;
+  }
+
+  .logo {
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    caret-color: transparent;
+  }
+
+  .fields {
+    margin-top: -30px;
+  }
+  .footer {
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
