@@ -8,17 +8,22 @@ exports.addBarangay = async (req, res) => {
   }
 
   try {
-    const existingBarangay = await Barangay.findOne({ name });
+    const cleanedName = name.trim();
+
+    const existingBarangay = await Barangay.findOne({
+      name: { $regex: new RegExp(`^${cleanedName}$`, "i") },
+    });
+
     if (existingBarangay) {
       return res.status(400).json({ message: "Barangay already exists" });
     }
 
-    const barangay = new Barangay({ name });
+    const barangay = new Barangay({ name: cleanedName });
     await barangay.save();
 
     res.status(201).json({ message: "Barangay added successfully", barangay });
   } catch (error) {
-    console.error("Error adding barangay:", error);
+    console.error(" Error adding barangay:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

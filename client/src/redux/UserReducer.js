@@ -9,23 +9,24 @@ const initialState = {
 // User Reducer
 export const userReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "REFRESH_TOKEN_SUCCESS":
-      const updatedUser = {
-        ...state.user,
-        role: action.payload.role,
-        name: action.payload.name,
-      };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      return {
-        ...state,
-        token: action.payload.token,
-        user: updatedUser,
-      };
+    // case "REFRESH_TOKEN_SUCCESS":
+    //   const updatedUser = {
+    //     ...state.user,
+    //     role: action.payload.role,
+    //     name: action.payload.name,
+    //   };
+    //   localStorage.setItem("user", JSON.stringify(updatedUser));
+    //   return {
+    //     ...state,
+    //     token: action.payload.token,
+    //     user: updatedUser,
+    //   };
 
     case "SET_USER":
       return {
         ...state,
         user: action.payload,
+        token: action.payload.token,
         loading: false,
         isUserLoading: false,
       };
@@ -37,7 +38,7 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload,
-        token: action.payload.token,
+        token: action.payload.accessToken,
         refreshToken: action.payload.refreshToken,
         name: action.payload.name,
         role: action.payload.role,

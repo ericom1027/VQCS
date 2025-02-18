@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { submitVote } from "../api/apiVotes";
 import { fetchPrecincts } from "../api/apiPrecinct";
 import { fetchCandidates } from "../api/apiCandidate";
-import { useSelector, useDispatch } from "react-redux";
-import { refreshAccessTokenAction } from "../redux/action/refreshToken";
+import { useSelector } from "react-redux";
+import io from "socket.io-client";
+
 import {
   Button,
   Navbar,
@@ -27,16 +28,7 @@ const WatcherDashboard = () => {
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    if (!token && refreshToken) {
-      dispatch(refreshAccessTokenAction());
-    }
-  }, [dispatch]);
+  const socketRef = useRef(null);
 
   useEffect(() => {
     async function loadCandidatesAndPrecincts() {
@@ -71,6 +63,35 @@ const WatcherDashboard = () => {
   const positions = [
     ...new Set(candidates.map((candidate) => candidate.position)),
   ];
+
+  useEffect(() => {
+    if (!socketRef.current) {
+      socketRef.current = io("http://localhost:8000", {
+        withCredentials: true,
+      });
+
+      socketRef.current.on("updateVotes", (updatedVote) => {
+        // console.log("🔹 Received updatedVote:", updatedVote);
+
+        setCandidates((prevCandidates) => {
+          // console.log("🔹 Current Candidates:", prevCandidates);
+
+          return prevCandidates.map((candidate) => {
+            // console.log(
+            //   `Checking candidate ${candidate._id} === ${updatedVote.candidate}`
+            // );
+            return candidate._id === updatedVote.candidate
+              ? { ...candidate, votes: updatedVote.votes }
+              : candidate;
+          });
+        });
+      });
+
+      return () => {
+        socketRef.current.disconnect();
+      };
+    }
+  }, []);
 
   const handleVoteSubmit = async (e) => {
     e.preventDefault();

@@ -74,7 +74,11 @@ const PrecinctManagement = () => {
       setPrecincts((prevPrecincts) => [...prevPrecincts, response.precinct]);
       setNewPrecinct({ number: "", barangay: "" });
     } catch (error) {
-      setMessage("Error adding precinct.");
+      if (error.response && error.response.status === 400) {
+        setMessage("Precinct already exists.");
+      } else {
+        setMessage("Error adding precinct.");
+      }
     }
   };
 

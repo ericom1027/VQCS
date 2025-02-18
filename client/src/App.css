@@ -87,6 +87,18 @@ body {
   caret-color: transparent;
 }
 
+.text-candidates {
+  display: inline-block;
+  text-align: center;
+  margin: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 18px;
+  animation: fadeInOut 2s infinite;
+  caret-color: transparent;
+  font-size: 30px;
+}
+
 .fields {
   margin-top: -70px;
 }

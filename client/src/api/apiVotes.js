@@ -1,88 +1,24 @@
-import axios from "axios";
+import { API, getAuthHeaders } from "../utils/interceptors";
 
-const API_URL = "https://vqcs.onrender.com/api";
-// const API_URL = "http://localhost:8000/api";
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    console.error("No token found!");
-    return null;
-  }
-  return { Authorization: `Bearer ${token}` };
-};
-
-const getRefreshToken = async () => {
-  try {
-    const refreshToken = localStorage.getItem("refreshToken");
-    const response = await axios.post(`${API_URL}/auth/refresh`, {
-      refreshToken,
-    });
-    return response.data.token;
-  } catch (error) {
-    console.error("Error refreshing token:", error.message);
-    return null;
-  }
-};
-
+// Fetch Votes
 export const fetchVotes = async () => {
   try {
-    let headers = getAuthHeaders();
-
-    if (!headers) {
-      console.error("No authorization headers found.");
-      return [];
-    }
-
-    let response = await axios.get(`${API_URL}/votes`, { headers });
-
-    if (response.status === 401) {
-      console.warn("Token expired. Attempting to refresh...");
-
-      const newToken = await getRefreshToken();
-      console.log("New Token:", newToken);
-
-      if (newToken) {
-        headers = { Authorization: `Bearer ${newToken}` };
-        response = await axios.get(`${API_URL}/votes`, { headers });
-      } else {
-        console.error("Failed to refresh token.");
-        return [];
-      }
-    }
-
-    // console.log("API Response:", response.data);
-
+    const headers = getAuthHeaders();
+    const response = await API.get(`/votes`, { headers });
     return response.data;
   } catch (error) {
     console.error(
       "Error fetching votes:",
-      error.response ? error.response.data : error.message
+      error.response?.data || error.message
     );
-
-    if (error.response) {
-      console.log("Full Error Response:", error.response);
-    }
-
     return [];
   }
 };
 
 export const submitVote = async (data) => {
   try {
-    let headers = getAuthHeaders();
-    if (!headers) return;
-
-    let response = await axios.post(`${API_URL}/votes`, data, { headers });
-
-    if (response.status === 401) {
-      const newToken = await getRefreshToken();
-      if (newToken) {
-        headers = { Authorization: `Bearer ${newToken}` };
-        response = await axios.post(`${API_URL}/votes`, data, { headers });
-      }
-    }
-
+    const headers = getAuthHeaders();
+    const response = await API.post(`/votes`, data, { headers });
     return response.data;
   } catch (error) {
     console.error(
@@ -93,67 +29,24 @@ export const submitVote = async (data) => {
   }
 };
 
-// Fetch Barangay total votes
-
 export const fetchBarangayResult = async () => {
   try {
-    let headers = getAuthHeaders();
-    if (!headers) {
-      console.error("No authorization headers found.");
-      return [];
-    }
-
-    let response = await axios.get(`${API_URL}/votes/barangayResult`, {
-      headers,
-    });
-
-    if (response.status === 401) {
-      console.warn("Token expired. Attempting to refresh...");
-
-      const newToken = await getRefreshToken();
-      if (newToken) {
-        headers = { Authorization: `Bearer ${newToken}` };
-        response = await axios.get(`${API_URL}/votes`, { headers });
-      } else {
-        console.error("Failed to refresh token.");
-        return [];
-      }
-    }
-
+    const headers = getAuthHeaders();
+    const response = await API.get(`/votes/barangayResult`, { headers });
     return response.data;
   } catch (error) {
     console.error(
-      "Error fetching votes:",
-      error.response ? error.response.data : error.message
+      "Error fetching barangay results:",
+      error.response?.data || error.message
     );
     return [];
   }
 };
 
-// ======= Fetch Overall Votes Win and Loser =============
 export const fetchOverallVotes = async () => {
   try {
-    let headers = getAuthHeaders();
-
-    if (!headers) {
-      console.error("No authorization headers found.");
-      return [];
-    }
-
-    let response = await axios.get(`${API_URL}/votes/overall`, { headers });
-
-    if (response.status === 401) {
-      console.warn("Token expired. Attempting to refresh...");
-
-      const newToken = await getRefreshToken();
-      if (newToken) {
-        headers = { ...headers, Authorization: `Bearer ${newToken}` };
-        response = await axios.get(`${API_URL}/votes/overall`, { headers });
-      } else {
-        console.error("Failed to refresh token.");
-        return [];
-      }
-    }
+    const headers = getAuthHeaders();
+    const response = await API.get(`/votes/overall`, { headers });
 
     if (response.status !== 200) {
       console.error(`Unexpected response status: ${response.status}`);

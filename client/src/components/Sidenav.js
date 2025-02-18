@@ -23,8 +23,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MailIcon from "@mui/icons-material/Mail";
 import Badge from "@mui/material/Badge";
-import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import ShareLocationIcon from "@mui/icons-material/ShareLocation";
 import { Col } from "react-bootstrap";
@@ -40,6 +40,7 @@ import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import BallotIcon from "@mui/icons-material/Ballot";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import AirplayIcon from "@mui/icons-material/Airplay";
 import {
   clearVoteNotificationCount,
   setVoteNotificationCount,
@@ -247,7 +248,7 @@ export default function Sidenav() {
             user &&
               user.role === "admin" && {
                 text: "Dashboard",
-                icon: <GridViewOutlinedIcon sx={{ color: "white" }} />,
+                icon: <DashboardIcon sx={{ color: "white" }} />,
                 route: "/admin-dashboard",
               },
 
@@ -580,6 +581,18 @@ export default function Sidenav() {
                     />
                   </ListItemIcon>
                   <span style={{ fontSize: "14px" }}>Poll-Watcher List</span>
+                </MenuItem>
+
+                <MenuItem
+                  onClick={() => {
+                    window.open("/displayResult", "_blank");
+                    handleReportsMenuClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <AirplayIcon fontSize="small" sx={{ color: "white" }} />
+                  </ListItemIcon>
+                  <span style={{ fontSize: "14px" }}>Display Results</span>
                 </MenuItem>
               </Menu>
             </Toolbar>

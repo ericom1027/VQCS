@@ -20,6 +20,7 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+import AirplayIcon from "@mui/icons-material/Airplay";
 
 const AdminDashboard = () => {
   const [votes, setVotes] = useState([]);
@@ -57,17 +58,26 @@ const AdminDashboard = () => {
 
     const socket = socketRef.current;
 
-    socket.on("updateVotes", (newData) => {
-      // Sort votes on real-time update
-      const sortedVotes = newData.sort((a, b) => {
-        const positionOrder = { Mayor: 1, "Vice Mayor": 2, Councilor: 3 };
-        return (
-          positionOrder[a.candidate.position] -
-          positionOrder[b.candidate.position]
-        );
-      });
+    socket.on("updateVotes", (updatedVote) => {
+      // console.log("🔹 Received newData:", updatedVote);
 
-      setVotes(sortedVotes);
+      setVotes((prevVotes) => {
+        // Update the specific candidate's vote count
+        const updatedVotes = prevVotes.map((vote) =>
+          vote.candidate._id === updatedVote.candidate
+            ? { ...vote, votes: updatedVote.votes }
+            : vote
+        );
+
+        // Sort votes after updating
+        return updatedVotes.sort((a, b) => {
+          const positionOrder = { Mayor: 1, "Vice Mayor": 2, Councilor: 3 };
+          return (
+            positionOrder[a.candidate.position] -
+            positionOrder[b.candidate.position]
+          );
+        });
+      });
     });
 
     return () => {
@@ -100,7 +110,13 @@ const AdminDashboard = () => {
             className="p-4"
             component={Paper}
           >
-            <h6>📊 Real-Time-Votes</h6>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <h6>📊 Real-Time-Votes</h6>
+              <AirplayIcon
+                onClick={() => window.open("/displayResult", "_blank")}
+                sx={{ marginLeft: "auto" }}
+              />
+            </div>
             <Table sx={{ minWidth: 650 }} aria-label="vote results table">
               <TableHead className="custom-header">
                 <TableRow>

@@ -1,34 +1,33 @@
-import api from "../../utils/interceptors";
+import { API } from "../../utils/interceptors";
 
-// Action types
+export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGIN_FAILURE = "LOGIN_FAILURE";
 export const LOGOUT = "LOGOUT";
+export const SET_USER = "SET_USER";
+export const SET_LOADING = "SET_LOADING";
 
-const API_URL = "https://vqcs.onrender.com/api";
-// const API_URL = "http://localhost:8000/api";
+export const loginRequest = () => ({
+  type: LOGIN_REQUEST,
+});
 
-export const loginSuccess = (userData) => {
-  return {
-    type: LOGIN_SUCCESS,
-    payload: userData,
-  };
-};
+export const loginSuccess = (userData) => ({
+  type: LOGIN_SUCCESS,
+  payload: userData,
+});
 
-export const setUser = (user) => {
-  if (user) {
-    localStorage.setItem("user", JSON.stringify(user));
-  } else {
-    localStorage.removeItem("user");
-  }
+export const loginFailure = (error) => ({
+  type: LOGIN_FAILURE,
+  payload: error,
+});
 
-  return {
-    type: "SET_USER",
-    payload: user,
-  };
-};
+export const setUser = (user) => ({
+  type: SET_USER,
+  payload: user,
+});
 
 export const setLoading = (loading) => ({
-  type: "SET_LOADING",
+  type: SET_LOADING,
   payload: loading,
 });
 
@@ -36,38 +35,36 @@ export const logout = () => {
   localStorage.removeItem("user");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("token");
-  return {
-    type: LOGOUT,
-  };
+
+  return { type: LOGOUT };
 };
 
 export const login = (email, password) => async (dispatch) => {
+  dispatch(loginRequest());
+
   try {
     dispatch(setLoading(true));
 
-    const response = await api.post(`${API_URL}/auth/login`, {
-      email,
-      password,
-    });
+    const { data } = await API.post("/auth/login", { email, password });
 
-    const { data } = response;
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("user", JSON.stringify(data));
 
-    localStorage.setItem("user", JSON.stringify(data));
-    localStorage.setItem("refreshToken", data.refreshToken);
-    localStorage.setItem("token", data.token);
-
-    dispatch(
-      loginSuccess({
-        token: data.token,
-        refreshToken: data.refreshToken,
-        role: data.role,
-        name: data.name,
-      })
-    );
+      dispatch(setUser(data));
+      dispatch(loginSuccess(data));
+    } else {
+      console.error("Token not found in response:", data);
+      throw new Error("Token not found in response");
+    }
 
     return data;
   } catch (error) {
-    console.error("Login failed:", error);
+    console.error("Login Error:", error.response?.data || error.message);
+    dispatch(loginFailure(error.response?.data?.error || "Login failed"));
     throw error;
+  } finally {
+    dispatch(setLoading(false));
   }
 };

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import WatcherDashboard from "./pages/WatcherDashbord";
@@ -14,22 +14,29 @@ import CandidateList from "./pages/CandidateList";
 import Precincts from "./pages/PrecintManagement";
 import BarangayList from "./pages/BarangayList";
 import Unauthorized from "./components/Unauthorized";
-import { useDispatch } from "react-redux";
-import { refreshAccessTokenAction } from "./redux/action/refreshToken";
 import FinalCanvassing from "./components/FinalCanvassing";
 import SubmissionUser from "./components/SubmissionUser";
+import DisplayResults from "./components/DisplayResults";
+// import { useDispatch } from "react-redux";
+// import { setUser } from "./redux/action/userAction";
 
 const App = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const refreshToken = localStorage.getItem("refreshToken");
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem("user");
 
-    if (!token && refreshToken) {
-      dispatch(refreshAccessTokenAction());
-    }
-  }, [dispatch]);
+  //   if (storedUser) {
+  //     const parsedUser = JSON.parse(storedUser);
+  //     if (parsedUser.token) {
+  //       dispatch(setUser(parsedUser));
+  //     } else {
+  //       console.warn(" No Token Found Inside Stored User!");
+  //     }
+  //   } else {
+  //     console.warn(" No User Found in Local Storage");
+  //   }
+  // }, [dispatch]);
 
   return (
     <Router>
@@ -56,6 +63,7 @@ const App = () => {
           <Route path="/barangay-results" element={<BarangayResult />} />
           <Route path="/overall" element={<FinalCanvassing />} />
           <Route path="/userSubmission" element={<SubmissionUser />} />
+          <Route path="/displayResult" element={<DisplayResults />} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>

@@ -22,6 +22,7 @@ const io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_URL.split(","),
     methods: "GET,POST,PUT,DELETE",
+    credentials: true,
   },
 });
 
@@ -37,8 +38,9 @@ io.on("connection", (socket) => {
     io.emit("updateVotes", data);
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (reason) => {
     console.log(` User disconnected: ${socket.id}`);
+    console.log(`User disconnected due to ${reason}`);
   });
 });
 
@@ -48,6 +50,7 @@ app.use(
     origin: process.env.CLIENT_URL.split(","),
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type,Authorization",
+    credentials: true,
   })
 );
 
@@ -66,7 +69,7 @@ app.use("/api/precincts", precinctRoutes);
 app.use("/api", voteRoutes);
 app.use("/api/barangays", barangayRoutes);
 
-app.get("*", (req, res) => {
+app.get("*", (res) => {
   res.sendFile(path.join(__dirname, "client", "index.html"));
 });
 

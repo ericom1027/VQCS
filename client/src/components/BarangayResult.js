@@ -19,6 +19,8 @@ import { io } from "socket.io-client";
 import { useReactToPrint } from "react-to-print";
 import PrintIcon from "@mui/icons-material/Print";
 import { useNavigate } from "react-router-dom";
+import BackupTableIcon from "@mui/icons-material/BackupTable";
+import * as XLSX from "xlsx";
 
 const BarangayResult = () => {
   const [votes, setVotes] = useState([]);
@@ -52,19 +54,16 @@ const BarangayResult = () => {
 
     socket.on("votesUpdated", (newVotes) => {
       const sortedVotes = [...newVotes].sort((a, b) => {
-        // Sort by position first
         const positionComparison =
           positionOrder[a.candidate.position] -
           positionOrder[b.candidate.position];
 
         if (positionComparison === 0) {
-          // If the position is the same, sort by last name, then first name
           const nameComparison =
             a.candidate.lastName.localeCompare(b.candidate.lastName) ||
             a.candidate.firstName.localeCompare(b.candidate.firstName);
 
           if (nameComparison === 0) {
-            // If both names are the same, sort by total votes
             return b.totalVotes - a.totalVotes;
           }
 
@@ -80,19 +79,16 @@ const BarangayResult = () => {
     const getVotes = async () => {
       const data = await fetchBarangayResult();
       const sortedVotes = [...data].sort((a, b) => {
-        // Sort by position first
         const positionComparison =
           positionOrder[a.candidate.position] -
           positionOrder[b.candidate.position];
 
         if (positionComparison === 0) {
-          // If the position is the same, sort by last name, then first name
           const nameComparison =
             a.candidate.lastName.localeCompare(b.candidate.lastName) ||
             a.candidate.firstName.localeCompare(b.candidate.firstName);
 
           if (nameComparison === 0) {
-            // If both names are the same, sort by total votes
             return b.totalVotes - a.totalVotes;
           }
 
@@ -124,6 +120,20 @@ const BarangayResult = () => {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  const handleExportToExcel = () => {
+    const formattedVotes = votes.map((vote) => ({
+      Barangay: vote.barangay,
+      Candidate: `${vote.candidate.firstName} ${vote.candidate.lastName}`,
+      Position: vote.candidate.position,
+      TotalVotes: vote.totalVotes,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(formattedVotes);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Barangay Results");
+    XLSX.writeFile(wb, "Barangay-Results.xlsx");
+  };
 
   if (loading) {
     return (
@@ -158,7 +168,16 @@ const BarangayResult = () => {
               <Button size="small" variant="contained" onClick={handlePrint}>
                 <PrintIcon /> Print
               </Button>
-
+              <Button
+                className="m-2"
+                onClick={handleExportToExcel}
+                variant="contained"
+                color="success"
+                size="small"
+              >
+                <BackupTableIcon />
+                Export
+              </Button>
               <Button
                 className="m-2"
                 onClick={() => navigate("/admin-dashboard")}

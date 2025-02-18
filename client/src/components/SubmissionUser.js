@@ -19,6 +19,8 @@ import { Row } from "react-bootstrap";
 import { fetchVotes } from "../api/apiVotes";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import BackupTableIcon from "@mui/icons-material/BackupTable";
+import * as XLSX from "xlsx";
 
 const SubmissionUser = () => {
   const [votes, setVotes] = useState([]);
@@ -52,20 +54,17 @@ const SubmissionUser = () => {
         const data = await fetchVotes();
         setLoading(false);
 
-        // Sort by position and name if positions are the same
         const sortedVotes = data.sort((a, b) => {
           const positionOrder = { Mayor: 1, "Vice Mayor": 2, Councilor: 3 };
 
-          // First sort by position
           const positionComparison =
             positionOrder[a.candidate.position] -
             positionOrder[b.candidate.position];
 
-          // If positions are the same, sort by candidate name
           if (positionComparison === 0) {
             const nameA = `${a.candidate.firstName} ${a.candidate.lastName}`;
             const nameB = `${b.candidate.firstName} ${b.candidate.lastName}`;
-            return nameA.localeCompare(nameB); // Compare names alphabetically
+            return nameA.localeCompare(nameB);
           }
 
           return positionComparison;
@@ -97,6 +96,22 @@ const SubmissionUser = () => {
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  const handleExportToExcel = () => {
+    const formattedVotes = votes.map((vote) => ({
+      Candidate: `${vote.candidate.firstName} ${vote.candidate.lastName}`,
+      Position: vote.candidate.position,
+      Precint: vote.precinct,
+      Barangay: vote.barangay,
+      TotalVotes: vote.totalVotes,
+      SubmittedBy: vote.submittedBy,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(formattedVotes);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Watcher Submission List");
+    XLSX.writeFile(wb, "Watchers-Submission.xlsx");
+  };
 
   if (loading) {
     return (
@@ -130,6 +145,16 @@ const SubmissionUser = () => {
             <Box>
               <Button size="small" variant="contained" onClick={handlePrint}>
                 <PrintIcon /> Print
+              </Button>
+              <Button
+                className="m-2"
+                onClick={handleExportToExcel}
+                variant="contained"
+                color="success"
+                size="small"
+              >
+                <BackupTableIcon />
+                Export
               </Button>
 
               <Button

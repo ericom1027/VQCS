@@ -1,67 +1,59 @@
 import axios from "axios";
-import store from "../redux/store";
-import { logout, loginSuccess } from "../redux/action/userAction";
 
-const API_URL = "https://vqcs.onrender.com/api";
-// const API_URL = "http://localhost:8000/api";
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  // console.log("🟡 Fetching Token:", token);
+  if (!token) {
+    console.error("No token found!");
+    return {};
+  }
+  return { Authorization: `Bearer ${token}` };
+};
 
-const api = axios.create({
-  baseURL: API_URL,
+// const API_URL = "https://vqcs.onrender.com/api";
+
+const API = axios.create({
+  // baseURL: "http://localhost:8000/api",
+  baseURL: "https://vqcs.onrender.com/api",
+  withCredentials: true,
 });
 
-// Request interceptor to attach token
-api.interceptors.request.use(
+API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+    const headers = getAuthHeaders();
+    if (headers.Authorization) {
+      config.headers = { ...config.headers, ...headers };
+      // console.log("Token Attached to Request:", headers.Authorization);
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    console.error(" Request Interceptor Error:", error);
+    return Promise.reject(error);
+  }
 );
 
-// Response interceptor for token refresh
-api.interceptors.response.use(
+API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
       try {
         const refreshToken = localStorage.getItem("refreshToken");
-
-        if (!refreshToken) {
-          console.warn("No refresh token found! Logging out...");
-          store.dispatch(logout());
-          return Promise.reject(error);
-        }
-
-        const response = await axios.post(`${API_URL}/auth/refresh-token`, {
+        const res = await API.post("/auth/refresh-token", {
           refreshToken,
         });
 
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
+        const newAccessToken = res.data.accessToken;
+        localStorage.setItem("token", newAccessToken);
 
-        localStorage.setItem("token", accessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-        store.dispatch(
-          loginSuccess({
-            token: accessToken,
-            refreshToken: newRefreshToken,
-          })
-        );
-
-        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
-        return api(originalRequest);
+        return API(originalRequest);
       } catch (refreshError) {
-        console.error("Failed to refresh token:", refreshError);
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        store.dispatch(logout());
+        console.error("Token refresh failed:", refreshError);
       }
     }
 
@@ -69,4 +61,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export { API, getAuthHeaders };

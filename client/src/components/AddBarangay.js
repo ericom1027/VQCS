@@ -9,18 +9,25 @@ const AddBarangay = ({ fetchBarangaysList, setMessage }) => {
   const navigate = useNavigate();
 
   const handleAddBarangay = async () => {
-    if (!name) {
+    if (!name.trim()) {
       setMessage("Barangay name is required.");
       return;
     }
 
     try {
-      await addBarangay(name);
+      await addBarangay(name.trim());
       setMessage("Barangay added successfully.");
       setName("");
       fetchBarangaysList();
     } catch (error) {
-      setMessage("Failed to add barangay.");
+      if (
+        error.response &&
+        error.response.data.message === "Barangay already exists"
+      ) {
+        setMessage("Barangay already exists.");
+      } else {
+        setMessage("Failed to add barangay.");
+      }
     }
   };
 
