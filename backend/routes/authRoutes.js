@@ -25,10 +25,10 @@ router.get("/admin/dashboard", verify, verifyAdmin, adminDashboard);
 
 router.post("/refresh-token", refreshAccessToken);
 
-router.get("/online-users", verify, getOnlineUsers);
+router.get("/online-users", getOnlineUsers);
 
-router.get("/offline-users", verify, getOfflineUsers);
+router.get("/offline-users", getOfflineUsers);
 
-router.put("/:id/status", verify, setUserStatus);
+router.put("/:id/status", setUserStatus);
 
 module.exports = router;
