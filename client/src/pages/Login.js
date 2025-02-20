@@ -19,7 +19,7 @@ const Login = () => {
     try {
       const userData = await dispatch(login(email, password));
 
-      // Assuming the user's name is in userData.name
+      
       const userName = userData.name;
 
       Swal.fire({
