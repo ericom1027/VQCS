@@ -220,7 +220,7 @@ export default function Sidenav() {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
+    navigate("/");
   };
 
   return (

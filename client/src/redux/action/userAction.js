@@ -84,7 +84,7 @@ export const login = (email, password) => async (dispatch) => {
   }
 };
 
-// 🔹 Logout Action
+//  Logout Action
 export const logout = () => async (dispatch) => {
   try {
     const user = JSON.parse(localStorage.getItem("user"));
