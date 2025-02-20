@@ -248,6 +248,11 @@ const UserManagement = () => {
           >
             {editingUserId ? "Update User" : "Add User"}
           </Chip>
+          <Chip
+            color="error"
+            label="Cancel"
+            onClick={() => navigate("/admin-dashboard")}
+          />
           {editingUserId && (
             <Chip
               label="Cancel"
