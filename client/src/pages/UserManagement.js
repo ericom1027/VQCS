@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchUsers, addUser, updateUser, deleteUser } from "../api/apiUsers";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 import {
   Box,
   TextField,
@@ -8,7 +8,10 @@ import {
   Select,
   FormControl,
   InputLabel,
+  FormGroup,
+  FormControlLabel,
   MenuItem,
+  Switch,
 } from "@mui/material";
 import { Row, Col } from "react-bootstrap";
 import Paper from "@mui/material/Paper";
@@ -20,6 +23,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Sidenav from "./../components/Sidenav";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   { id: "name", label: "Name", minWidth: 170 },
@@ -32,6 +36,9 @@ const columns = [
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
+  const [checked, setChecked] = useState(false);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -79,7 +86,28 @@ const UserManagement = () => {
     }
   };
 
-  const handleDeleteUser = async (id) => {
+  const handleEditClick = (user) => {
+    setEditingUserId(user._id);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      password: "",
+      role: user.role,
+      username: user.username,
+    });
+  };
+
+  const handleDeleteUser = async (id, loggedInUserId) => {
+    if (id === loggedInUserId) {
+      Swal.fire({
+        title: "Action Not Allowed",
+        text: "You cannot delete your own account while logged in.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -90,26 +118,24 @@ const UserManagement = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await deleteUser(id);
-          setMessage("User deleted successfully");
-          loadUsers();
-          Swal.fire("Deleted!", "The user has been deleted.", "success");
+          const response = await deleteUser(id);
+
+          if (response.status === 200) {
+            setMessage("User deleted successfully");
+            loadUsers();
+            Swal.fire("Deleted!", "The user has been deleted.", "success");
+          } else {
+            throw new Error(
+              response.data?.message ||
+                `Unexpected response: ${response.status}`
+            );
+          }
         } catch (error) {
-          setMessage("Failed to delete user:", error);
-          Swal.fire("Error!", "There was an error deleting the user.", "error");
+          console.error("Error deleting user:", error);
+
+          Swal.fire("Error!", error.message, "error");
         }
       }
-    });
-  };
-
-  const handleEditClick = (user) => {
-    setEditingUserId(user._id);
-    setFormData({
-      name: user.name,
-      email: user.email,
-      password: "",
-      role: user.role,
-      username: user.username,
     });
   };
 
@@ -125,6 +151,13 @@ const UserManagement = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+    if (event.target.checked) {
+      navigate("/online-users");
+    }
   };
 
   return (
@@ -147,7 +180,7 @@ const UserManagement = () => {
             <Col>
               <TextField
                 type="text"
-                label="Fullname"
+                label="Full Name"
                 variant="standard"
                 value={formData.name}
                 onChange={(e) =>
@@ -227,6 +260,12 @@ const UserManagement = () => {
 
         {/* Table */}
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <FormGroup>
+            <FormControlLabel
+              control={<Switch checked={checked} onChange={handleChange} />}
+              label="Show Users Activity"
+            />
+          </FormGroup>
           <TableContainer>
             <Table sx={{ minWidth: 650 }} aria-label="Barangay results table">
               <TableHead className="custom-header">

@@ -5,7 +5,7 @@ const createAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, name: user.name, email: user.email, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "1h" }
   );
 };
 
@@ -31,11 +31,12 @@ const verify = (req, res, next) => {
     return res.status(401).json({ message: "Invalid token format" });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+  jwt.verify(token.trim(), process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       console.error("JWT Error: Invalid token");
       return res.status(401).json({ message: "Invalid token" });
     }
+
     req.user = decoded;
     next();
   });

@@ -59,7 +59,7 @@ const AdminDashboard = () => {
     const socket = socketRef.current;
 
     socket.on("updateVotes", (updatedVote) => {
-      // console.log("🔹 Received newData:", updatedVote);
+      // console.log(" Received newData:", updatedVote);
 
       setVotes((prevVotes) => {
         // Update the specific candidate's vote count
@@ -83,7 +83,7 @@ const AdminDashboard = () => {
     return () => {
       socket.off("updateVotes");
     };
-  }, []);
+  }, [votes]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

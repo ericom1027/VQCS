@@ -3,12 +3,14 @@ import { useDispatch } from "react-redux";
 import { login } from "../redux/action/userAction";
 import { useNavigate } from "react-router-dom";
 import { Form } from "react-bootstrap";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Swal from "sweetalert2";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -66,7 +68,7 @@ const Login = () => {
 
           <TextField
             variant="standard"
-            type="password"
+            type={showPassword ? "text" : "password"}
             label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -79,6 +81,22 @@ const Login = () => {
                 borderBottomColor: "white",
               },
               "& .MuiInput-underline:after": { borderBottomColor: "white" },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? (
+                      <VisibilityOff style={{ color: "white" }} />
+                    ) : (
+                      <Visibility style={{ color: "white" }} />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
           />
 

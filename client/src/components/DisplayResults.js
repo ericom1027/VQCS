@@ -35,6 +35,7 @@ const DisplayResults = () => {
     const socket = socketRef.current;
 
     socket.on("updateVotes", (newVotes) => {
+      // console.log("Received updateVotes event:", newVotes);
       if (newVotes) {
         setVotes((prevVotes) => (prevVotes.length ? prevVotes : newVotes));
       }
@@ -62,7 +63,7 @@ const DisplayResults = () => {
     return () => {
       socket.off("updateVotes");
     };
-  }, []);
+  }, [votes]);
 
   useEffect(() => {
     setPage(0);

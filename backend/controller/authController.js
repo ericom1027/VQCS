@@ -73,6 +73,13 @@ exports.editUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+
+    if (req.user.id === req.params.id) {
+      return res
+        .status(403)
+        .json({ message: "You cannot delete your own account." });
+    }
+
     const deletedUser = await User.findByIdAndDelete(id);
 
     if (!deletedUser) {
@@ -118,8 +125,16 @@ exports.login = async (req, res) => {
     const token = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
-    // Send tokens in response
-    res.json({ token, refreshToken, role: user.role, name: user.name });
+    // user.isOnline = true;
+    // await user.save();
+
+    res.json({
+      id: user.id,
+      token,
+      refreshToken,
+      role: user.role,
+      name: user.name,
+    });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -166,5 +181,57 @@ exports.refreshAccessToken = async (req, res) => {
   } catch (error) {
     console.error("Invalid refresh token:", error);
     res.status(400).json({ message: "Invalid or expired refresh token." });
+  }
+};
+
+exports.setUserStatus = async (req, res) => {
+  try {
+    const { isOnline } = req.body;
+    const { id } = req.params;
+
+    if (typeof isOnline !== "boolean") {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+
+    const userBefore = await User.findById(id);
+    // console.log(" User before update:", userBefore);
+
+    if (!userBefore) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user = await User.findByIdAndUpdate(id, { isOnline }, { new: true });
+
+    // console.log("User after update:", user);
+
+    return res.json({
+      message: `User ${id} is now ${isOnline ? "online" : "offline"}`,
+      user,
+    });
+  } catch (error) {
+    console.error(" Error updating user status:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.getOnlineUsers = async (req, res) => {
+  try {
+    const onlineUsers = await User.find({ isOnline: true }).select("-password");
+    res.json(onlineUsers);
+  } catch (error) {
+    console.error("Get online users error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getOfflineUsers = async (req, res) => {
+  try {
+    const offlineUsers = await User.find({ isOnline: false }).select(
+      "-password"
+    );
+    res.json(offlineUsers);
+  } catch (error) {
+    console.error("Get offline users error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

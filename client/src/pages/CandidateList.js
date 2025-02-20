@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { fetchCandidates, deleteCandidate } from "../api/apiCandidate";
 import { useNavigate } from "react-router-dom";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import PreviewIcon from "@mui/icons-material/Preview";
 import {
   Box,
   Paper,
@@ -12,7 +15,6 @@ import {
   TableRow,
   TablePagination,
   Button,
-  Chip,
   Modal,
   Typography,
 } from "@mui/material";
@@ -189,13 +191,13 @@ const CandidateList = () => {
                                       justifyContent: "space-between",
                                     }}
                                   >
-                                    <Chip
+                                    <PreviewIcon
                                       label="View"
                                       color="warning"
                                       onClick={() => handleOpenModal(candidate)}
                                       sx={{ mr: 1 }}
                                     />
-                                    <Chip
+                                    <EditOutlinedIcon
                                       label="Edit"
                                       color="primary"
                                       sx={{ mr: 1 }}
@@ -203,7 +205,7 @@ const CandidateList = () => {
                                         handleUpdateCandidate(candidate._id)
                                       }
                                     />
-                                    <Chip
+                                    <DeleteOutlineOutlinedIcon
                                       label="Delete"
                                       color="error"
                                       onClick={() =>

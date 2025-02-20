@@ -17,6 +17,7 @@ import Unauthorized from "./components/Unauthorized";
 import FinalCanvassing from "./components/FinalCanvassing";
 import SubmissionUser from "./components/SubmissionUser";
 import DisplayResults from "./components/DisplayResults";
+import OnlineUsers from "./components/OnlineUsers";
 // import { useDispatch } from "react-redux";
 // import { setUser } from "./redux/action/userAction";
 
@@ -64,6 +65,7 @@ const App = () => {
           <Route path="/overall" element={<FinalCanvassing />} />
           <Route path="/userSubmission" element={<SubmissionUser />} />
           <Route path="/displayResult" element={<DisplayResults />} />
+          <Route path="/online-users" element={<OnlineUsers />} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>

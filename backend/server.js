@@ -18,44 +18,35 @@ const barangayRoutes = require("./routes/barangayRoutes");
 const app = express();
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL.split(","),
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  },
-});
+// Define CORS options
+const corsOptions = {
+  origin: process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : "*",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
 
+app.use(cors(corsOptions));
+
+// Initialize Socket.IO with CORS settings
+const io = new Server(server, { cors: corsOptions });
 global.io = io;
-// console.log("io initialized", io ? "Yes" : "No");
 
-// Handle socket connections
 io.on("connection", (socket) => {
-  // console.log(` User connected: ${socket.id}`);
+  // console.log(`User connected: ${socket.id}`);
 
   socket.on("voteUpdate", (data) => {
-    // console.log(" Broadcasting updated vote data:", data);
     io.emit("updateVotes", data);
   });
 
   socket.on("disconnect", (reason) => {
-    console.log(` User disconnected: ${socket.id}`);
-    console.log(`User disconnected due to ${reason}`);
+    // console.log(`User disconnected: ${socket.id}`);
+    // console.log(`Reason: ${reason}`);
   });
 });
 
 // Middleware
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL.split(","),
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization",
-    credentials: true,
-  })
-);
-
 app.use(express.static(path.join(__dirname, "client")));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -69,13 +60,11 @@ app.use("/api/precincts", precinctRoutes);
 app.use("/api", voteRoutes);
 app.use("/api/barangays", barangayRoutes);
 
-app.get("*", (res) => {
+app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "index.html"));
 });
 
-// Start Server
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
-// Export for external use
 module.exports = { mongoose, app, server, io };
