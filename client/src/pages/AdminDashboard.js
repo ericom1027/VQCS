@@ -83,7 +83,7 @@ const AdminDashboard = () => {
     return () => {
       socket.off("updateVotes");
     };
-  }, [votes]);
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
