@@ -10,11 +10,11 @@ const getAuthHeaders = () => {
   return { Authorization: `Bearer ${token}` };
 };
 
-// const API_URL = "https://vqcs.onrender.com/api";
+// const API_URL = "https://vqcs-backend.onrender.com/api";
 
 const API = axios.create({
   // baseURL: "http://localhost:8000/api",
-  baseURL: "https://vqcs.onrender.com/api",
+  baseURL: "https://vqcs-backend.onrender.com/api",
   withCredentials: true,
 });
 

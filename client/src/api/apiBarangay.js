@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // const API_URL = "http://localhost:8000/api";
-const API_URL = "https://vqcs.onrender.com/api";
+const API_URL = "https://vqcs-backend.onrender.com/api";
 
 export const fetchBarangays = async () => {
   try {
