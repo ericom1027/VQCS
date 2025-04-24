@@ -1,5 +1,5 @@
 import * as React from "react";
-import { LineChart } from "@mui/x-charts/LineChart";
+import { BarChart } from "@mui/x-charts/BarChart";
 import {
   Container,
   Paper,
@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 
 export default function VoteChart({ votes }) {
-  // console.log("Received votes data:", votes);
   const isSmallScreen = useMediaQuery("(max-width:600px)");
 
   if (!Array.isArray(votes) || votes.length === 0) {
@@ -49,18 +48,29 @@ export default function VoteChart({ votes }) {
       <h6 style={{ marginTop: "5px", marginLeft: "10px" }}>
         📊 Vote Statistics
       </h6>
-      <LineChart
-        xAxis={[
+      <BarChart
+        height={isSmallScreen ? 100 : 200}
+        width={isSmallScreen ? 200 : 800}
+        series={[
           {
-            scaleType: "band",
-            data: formattedVotes.map((v) => v.candidate.name),
+            data: formattedVotes.map((v) => v.votes),
+            label: "Total Votes",
+            id: "votesId",
+            yAxisId: "leftAxisId",
           },
         ]}
-        series={[
-          { data: formattedVotes.map((v) => v.votes), label: "Total Votes" },
+        xAxis={[
+          {
+            data: formattedVotes.map((v) => v.candidate.name),
+            scaleType: "band",
+          },
         ]}
-        width={isSmallScreen ? 200 : 800}
-        height={isSmallScreen ? 100 : 200}
+        yAxis={[
+          {
+            id: "leftAxisId",
+            width: 50,
+          },
+        ]}
       />
     </Container>
   );

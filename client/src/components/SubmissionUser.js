@@ -178,7 +178,7 @@ const SubmissionUser = () => {
                   <TableRow>
                     <TableCell>Candidates</TableCell>
                     <TableCell>Position</TableCell>
-                    <TableCell>Precinct</TableCell>
+                    <TableCell>Clustered Precinct</TableCell>
                     <TableCell>Barangay</TableCell>
                     <TableCell>Total Votes</TableCell>
                     <TableCell>Submitted By(Poll Watcher)</TableCell>

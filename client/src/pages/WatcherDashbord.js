@@ -207,14 +207,14 @@ const WatcherDashboard = () => {
 
           <Col xs={12} sm={6}>
             <Form.Group>
-              <Form.Label>Select Precinct</Form.Label>
+              <Form.Label>Select Cluster</Form.Label>
               <Form.Control
                 as="select"
                 value={selectedPrecinct}
                 onChange={(e) => setSelectedPrecinct(e.target.value)}
                 disabled={!selectedBarangay}
               >
-                <option value="">Select Precinct</option>
+                <option value="">Select Cluster</option>
                 {precincts
                   .filter(
                     (precinct) => precinct.barangay._id === selectedBarangay

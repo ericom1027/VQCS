@@ -294,7 +294,7 @@ export default function Sidenav() {
             },
 
             {
-              text: "Precincts",
+              text: "Cluster Precinct",
               icon: <ShareLocationIcon sx={{ color: "white" }} />,
               route: "/precincts",
             },

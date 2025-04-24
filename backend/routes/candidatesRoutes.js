@@ -5,6 +5,7 @@ const {
   addCandidate,
   updateCandidate,
   deleteCandidate,
+
   upload,
 } = require("../controller/candidateController");
 
