@@ -121,7 +121,7 @@ const AdminDashboard = () => {
               <TableHead className="custom-header">
                 <TableRow>
                   <TableCell>Barangay</TableCell>
-                  <TableCell>Clustered Precinct</TableCell>
+                  <TableCell>Cluster Group Number</TableCell>
                   <TableCell>Candidates</TableCell>
                   <TableCell>Position</TableCell>
                   <TableCell>Total Votes</TableCell>
