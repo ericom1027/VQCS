@@ -5,7 +5,6 @@ const {
   submitVote,
   getBarangayResults,
   getOverallResults,
-  // getCandidatesPercentageResults,
 } = require("../controller/voteController");
 
 const { verify } = require("../middleware/authentication");
@@ -15,7 +14,5 @@ router.post("/votes", verify, submitVote);
 router.get("/votes/barangayResult", getBarangayResults);
 
 router.get("/votes/overall", getOverallResults);
-
-// router.get("/getpercentage", getCandidatesPercentageResults);
 
 module.exports = router;

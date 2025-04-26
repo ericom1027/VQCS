@@ -26,14 +26,32 @@ export default function VoteChart({ votes }) {
     );
   }
 
-  const formattedVotes = votes.map((v) => ({
-    candidate: {
-      name: `${v.candidate?.firstName || "Unknown"} ${
-        v.candidate?.lastName || ""
-      }`,
-    },
-    votes: v.totalVotes || 0,
-  }));
+  // const formattedVotes = votes.map((v) => ({
+  //   candidate: {
+  //     name: `${v.candidate?.firstName || "Unknown"} ${
+  //       v.candidate?.lastName || ""
+  //     }`,
+  //   },
+  //   votes: v.totalVotes || 0,
+  // }));
+
+  const voteTotals = votes.reduce((acc, v) => {
+    const name = `${v.candidate?.firstName || "Unknown"} ${
+      v.candidate?.lastName || ""
+    }`;
+    if (!acc[name]) {
+      acc[name] = 0;
+    }
+    acc[name] += v.totalVotes || 0;
+    return acc;
+  }, {});
+
+  const formattedVotes = Object.entries(voteTotals).map(
+    ([name, totalVotes]) => ({
+      candidate: { name },
+      votes: totalVotes,
+    })
+  );
 
   return (
     <Container

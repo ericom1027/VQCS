@@ -25,7 +25,7 @@ import { Form, Row } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 const columns = [
-  { id: "number", label: "Cluster Precinct Number", minWidth: 170 },
+  { id: "number", label: "Cluster Group Number", minWidth: 170 },
   { id: "barangay", label: "Barangay", minWidth: 170 },
   { id: "actions", label: "Actions", minWidth: 170 },
 ];
@@ -157,7 +157,7 @@ const PrecinctManagement = () => {
           style={{ marginLeft: "200px" }}
         >
           <div>
-            <h2>Clustered Management</h2>
+            <h2>Clustered Group Management</h2>
             {message && <div className="alert alert-info">{message}</div>}
 
             <Form
@@ -165,7 +165,7 @@ const PrecinctManagement = () => {
               className="mb-4"
             >
               <Form.Group controlId="precinctNumber">
-                <Form.Label>Clustered Grouped Precinct</Form.Label>
+                <Form.Label>Cluster Group Number</Form.Label>
                 <Form.Control
                   type="text"
                   value={newPrecinct.number}
@@ -210,7 +210,7 @@ const PrecinctManagement = () => {
               </Button>
             </Form>
 
-            <h3 className="text-center">List of Clustered Precinct</h3>
+            <h3 className="text-center">List of Clustered Group Number</h3>
             <Paper sx={{ width: "100%", overflow: "hidden" }}>
               <TableContainer>
                 <Table
@@ -267,13 +267,7 @@ const PrecinctManagement = () => {
                 </Table>
               </TableContainer>
               <TablePagination
-                rowsPerPageOptions={[
-                  5,
-                  10,
-                  25,
-                  100,
-                  { label: "All", value: -1 },
-                ]}
+                rowsPerPageOptions={[5, 10, 25, 50, 100]}
                 component="div"
                 count={precincts.length}
                 rowsPerPage={rowsPerPage}

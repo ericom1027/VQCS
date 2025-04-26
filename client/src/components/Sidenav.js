@@ -294,7 +294,7 @@ export default function Sidenav() {
             },
 
             {
-              text: "Cluster Precinct",
+              text: "Cluster Group No.",
               icon: <ShareLocationIcon sx={{ color: "white" }} />,
               route: "/precincts",
             },
@@ -522,7 +522,7 @@ export default function Sidenav() {
                     }}
                   >
                     <MenuItem onClick={() => navigate("/precincts")}>
-                      Precinct Settings
+                      Cluster Settings
                     </MenuItem>
                     <MenuItem onClick={() => navigate("/barangay-list")}>
                       Barangay Settings
